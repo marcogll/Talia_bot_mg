@@ -1,78 +1,78 @@
-# 🤍 Talía — Asistente Ejecutiva Inteligente
+# Talía — Asistente Ejecutiva Inteligente
 
-Talía es una asistente ejecutiva digital diseñada para centralizar, ordenar y coordinar la agenda, solicitudes y actividades de Marco. Actúa como un punto único de entrada para clientes, equipo y administradores, cuidando el tiempo, validando contexto y ejecutando automatizaciones mediante integraciones externas.
+Talía es una asistente ejecutiva digital diseñada para centralizar, ordenar y coordinar la agenda, solicitudes y actividades de Marco. Funciona como un **punto único de entrada** para clientes, equipo y administradores, asegurando que cada solicitud se procese con contexto, validación y respeto por el tiempo disponible.
 
-Talía no toma decisiones arbitrarias: consulta, valida, confirma y ejecuta.
+Talía no improvisa ni asume. **Consulta, valida, confirma y ejecuta.**
 
 ---
 
-## 🎯 Objetivo del Sistema
+## 🎯 Propósito del Sistema
 
-Talía existe para reducir fricción operativa y proteger el tiempo ejecutivo. Sus objetivos principales son:
+Talía existe para eliminar fricción operativa y proteger el tiempo ejecutivo. El sistema está diseñado para:
 
-* Centralizar todas las solicitudes de agenda y trabajo
+* Centralizar todas las solicitudes de agenda, citas y actividades
 * Validar disponibilidad real antes de comprometer tiempo
 * Priorizar clientes sin romper compromisos existentes
-* Delegar lógica compleja de negocio a n8n
-* Mantener trazabilidad total mediante webhooks
-* Permitir crecimiento modular y escalable
+* Delegar reglas de negocio y disponibilidad a flujos en n8n
+* Mantener trazabilidad completa mediante eventos webhook
+* Escalar de forma modular sin romper flujos existentes
 
 ---
 
-## 🧠 Personalidad y Actitud
+## 🧠 Personalidad, Actitud y Voz
 
 Talía se comporta como una asistente ejecutiva profesional:
 
-* Educada, clara y precisa
+* Educada, clara y precisa en cada respuesta
 * Proactiva, pero nunca invasiva
-* Siempre confirma antes de agendar
-* No improvisa ni asume disponibilidad
-* Comunica decisiones con calma y orden
+* Siempre confirma antes de agendar o ejecutar acciones
+* No improvisa horarios ni decisiones
+* Comunica decisiones con calma, orden y neutralidad
 
-No es informal, no es robótica y no es sassy. Su rol es ordenar el día, no interrumpirlo.
+Talía no es informal, no es robótica y no utiliza sarcasmo. Su función es **ordenar el día, no interrumpirlo**.
 
 ---
 
-## 👥 Roles y Permisos
+## 👥 Roles y Niveles de Acceso
 
 ### Marco (Owner)
 
-* Consulta agenda y pendientes
+* Consulta agenda, pendientes y solicitudes activas
 * Recibe resumen diario automático a las 7:00 AM
 * Aprueba o rechaza solicitudes del equipo
 * Puede interactuar desde su número privado
-* Tiene prioridad absoluta en decisiones
+* Tiene prioridad absoluta sobre cualquier decisión
 
 ### Clientes
 
-* Solicitan citas de 30 minutos
-* Solo ven horarios disponibles
-* No acceden a la agenda completa
+* Solicitan citas de duración fija (30 minutos)
+* Visualizan únicamente horarios disponibles
+* No tienen acceso a la agenda completa
 
 ### Equipo Autorizado
 
-* Puede proponer actividades de mayor duración
+* Puede proponer actividades de mayor duración (ej. grabaciones)
 * Puede solicitar acciones operativas
-* Requiere aprobación para agendar tiempo
+* Toda actividad que consuma tiempo requiere aprobación
 
 ### Administradores
 
 * Ejecutan acciones sensibles
-* Requieren doble validación
-* Acceso a datos internos
+* Requieren validación adicional
+* Acceden a flujos administrativos restringidos
 
 ---
 
-## 🏗️ Arquitectura General
+## 🏗️ Arquitectura del Sistema
 
-Talía está construida en capas claramente definidas:
+Talía está construida en capas desacopladas que se comunican por eventos:
 
-1. Interfaz conversacional (Telegram / WhatsApp)
-2. Cerebro central en Python
-3. Automatización y reglas de negocio en n8n
-4. Servicios externos (Google Calendar, APIs, IA)
+1. **Interfaz Conversacional** – Telegram / WhatsApp
+2. **Cerebro Central** – Python
+3. **Automatización y Reglas** – n8n
+4. **Servicios Externos** – Google Calendar, IA, APIs
 
-Cada capa es desacoplada y se comunica mediante eventos y webhooks.
+Cada capa es independiente y puede evolucionar sin afectar a las demás.
 
 ---
 
@@ -80,65 +80,65 @@ Cada capa es desacoplada y se comunica mediante eventos y webhooks.
 
 ```text
 talia-bot/
-├── docker-compose.yml
-├── Dockerfile
-├── .env.example
-├── README.md
+├── docker-compose.yml        # Orquestación de contenedores
+├── Dockerfile               # Imagen del bot
+├── .env.example             # Variables de entorno
+├── README.md                # Documentación
 └── app/
     ├── main.py              # Cerebro del bot
-    ├── config.py            # Configuración global
-    ├── permissions.py       # Validación de roles
+    ├── config.py            # Configuración y credenciales
+    ├── permissions.py       # Roles y validaciones
     ├── scheduler.py         # Resumen diario y recordatorios
     ├── webhook_client.py    # Comunicación con n8n
-    ├── calendar.py          # Google Calendar
-    ├── llm.py               # Respuestas inteligentes
+    ├── calendar.py          # Integración Google Calendar
+    ├── llm.py               # Respuestas inteligentes (IA)
     └── modules/
-        ├── onboarding.py
-        ├── agenda.py
-        ├── citas.py
-        ├── equipo.py
-        ├── aprobaciones.py
-        ├── servicios.py
-        └── admin.py
+        ├── onboarding.py    # Bienvenida y menú inicial
+        ├── agenda.py        # Consulta de agenda
+        ├── citas.py         # Citas con clientes
+        ├── equipo.py        # Solicitudes del equipo
+        ├── aprobaciones.py  # Aprobaciones del owner
+        ├── servicios.py     # Servicios y cotizaciones
+        └── admin.py         # Acciones administrativas
 ```
 
 ---
 
 ## 🧠 Cerebro del Sistema (`main.py`)
 
-`main.py` es el orquestador principal. Sus responsabilidades son:
+`main.py` actúa como **orquestador central**. No contiene reglas de negocio complejas. Sus funciones son:
 
-* Recibir mensajes y callbacks de Telegram
-* Identificar al usuario y su rol
-* Mantener contexto de conversación
-* Delegar acciones a los módulos
-* Enviar y recibir eventos vía webhook
+* Recibir mensajes y callbacks
+* Identificar usuario y rol
+* Mantener contexto conversacional
+* Delegar acciones a módulos
+* Emitir y recibir eventos vía webhook
 
-`main.py` no contiene lógica de negocio compleja; solo coordina.
+Toda decisión importante se valida externamente.
 
 ---
 
 ## 🧩 Módulos Funcionales
 
-Cada módulo ejecuta una responsabilidad clara:
+Cada módulo cumple una responsabilidad única:
 
-* **onboarding.py**: bienvenida, `/start`, menú inicial
+* **onboarding.py**: inicio de conversación y opciones
 * **agenda.py**: consulta de agenda y pendientes
 * **citas.py**: flujo de citas con clientes
-* **equipo.py**: solicitudes del equipo
+* **equipo.py**: solicitudes internas del equipo
 * **aprobaciones.py**: aceptar o rechazar solicitudes
-* **servicios.py**: información y cotización de servicios
+* **servicios.py**: información y cotización de proyectos
 * **admin.py**: acciones administrativas
 
 ---
 
-## 🔁 Flujo General de Datos
+## 🔁 Flujo General de Ejecución
 
-1. Usuario envía mensaje o presiona botón
-2. Talía valida rol y contexto
+1. Usuario envía mensaje o interactúa con botones
+2. Talía valida identidad y permisos
 3. Se ejecuta el módulo correspondiente
-4. Si requiere lógica externa, se envía webhook a n8n
-5. n8n responde con decisión
+4. Si se requiere lógica externa, se envía evento a n8n
+5. n8n evalúa reglas y responde
 6. Talía comunica el resultado
 7. Si aplica, se agenda en Google Calendar
 
@@ -149,20 +149,20 @@ Cada módulo ejecuta una responsabilidad clara:
 ### Citas con Clientes
 
 * Duración fija: 30 minutos
-* Disponibilidad definida por n8n
-* Confirmación explícita
+* Disponibilidad definida exclusivamente por n8n
+* Confirmación explícita antes de agendar
 
 ### Actividades del Equipo
 
 * Duración flexible
-* Requieren aprobación de Marco
-* Solo usuarios autorizados
+* Requieren aprobación del owner
+* Solo usuarios autorizados pueden solicitarlas
 
 ---
 
 ## ⏰ Resumen Diario
 
-Todos los días a las 7:00 AM, Talía envía a Marco:
+Todos los días a las **7:00 AM**, Talía envía a Marco:
 
 * Agenda del día
 * Pendientes activos
@@ -172,16 +172,16 @@ Todos los días a las 7:00 AM, Talía envía a Marco:
 
 ## 🔌 Webhooks
 
-Toda acción relevante genera o responde un webhook.
+Toda acción relevante genera o responde un evento webhook.
 
-Ejemplo de solicitud:
+Ejemplo:
 
 ```json
 {
   "event": "request_activity",
   "from": "team",
   "duration_hours": 4,
-  "description": "Grabación proyecto"
+  "description": "Grabación de proyecto"
 }
 ```
 
@@ -204,7 +204,7 @@ TIMEZONE=America/Mexico_City
 
 ---
 
-## 🐳 Despliegue con Docker
+## 🐳 Despliegue con Docker Compose
 
 ```yaml
 version: "3.9"
@@ -224,17 +224,17 @@ services:
 1. Clonar el repositorio
 2. Crear archivo `.env`
 3. Configurar bot de Telegram
-4. Configurar flujos en n8n
+4. Configurar flujos y reglas en n8n
 5. Conectar Google Calendar
-6. Ejecutar con Docker Compose
+6. Levantar servicios con Docker Compose
 
 ---
 
-## ✨ Filosofía Final
+## ✨ Principio Rector
 
 Talía no es un bot que responde mensajes.
-Es un sistema de criterio, orden y respeto por el tiempo.
+Es un sistema de criterio, orden y protección del tiempo.
 
 Si algo no está claro, pregunta.
-Si algo invade agenda, protege.
-Si algo importa, lo prioriza.
+Si algo invade la agenda, protege.
+Si algo es importante, lo prioriza.
