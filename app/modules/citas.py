@@ -1,9 +1,12 @@
 # app/modules/citas.py
 
-def request_appointment(chat_id, requested_time):
+def request_appointment():
     """
-    Handles a client's request for an appointment.
+    Provides a link for scheduling an appointment.
     """
-    print(f"[{chat_id}] Requesting appointment for {requested_time}...")
-    # TODO: Implement appointment request logic
-    return "Your appointment request has been received."
+    # TODO: Integrate with a real scheduling service or n8n workflow
+    response_text = (
+        "Para agendar una cita, por favor utiliza el siguiente enlace: \n\n"
+        "[Enlace de Calendly](https://calendly.com/user/appointment-link)"
+    )
+    return response_text

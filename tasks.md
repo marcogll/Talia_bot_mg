@@ -20,8 +20,8 @@ This file tracks the development tasks for the Talía project.
 ## Phase 3: Module Implementation
 
 - [x] Implement `onboarding.py` module.
-- [ ] Implement `agenda.py` module.
-- [ ] Implement `citas.py` module.
+- [x] Implement `agenda.py` module.
+- [x] Implement `citas.py` module.
 - [ ] Implement `equipo.py` module.
 - [ ] Implement `aprobaciones.py` module.
 - [ ] Implement `servicios.py` module.
@@ -40,3 +40,4 @@ This file tracks the development tasks for the Talía project.
 - Created `tasks.md` to begin tracking development.
 - Completed initial project scaffolding.
 - Implemented the core logic for the bot, including the central orchestrator, permissions, and onboarding.
+- Implemented the `agenda` and `citas` modules.

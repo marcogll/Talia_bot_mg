@@ -1,17 +1,8 @@
 # app/modules/servicios.py
 
-def get_service_info(service_name):
+def get_service_info():
     """
-    Provides information about a service.
+    Provides information about available services.
     """
-    print(f"Fetching info for service: {service_name}")
-    # TODO: Implement service information logic
-    return f"Here is information about {service_name}."
-
-def request_quote(project_details):
-    """
-    Requests a quote for a project.
-    """
-    print(f"Requesting quote for: {project_details}")
-    # TODO: Implement quote request logic
-    return "Your quote request has been received."
+    # TODO: Fetch service details from a database or config file
+    return "Ofrecemos una variedad de servicios, incluyendo:\n\n- Consultoría Estratégica\n- Desarrollo de Software\n- Talleres de Capacitación\n\n¿Sobre cuál te gustaría saber más?"
