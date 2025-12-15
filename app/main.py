@@ -102,6 +102,7 @@ def main() -> None:
 
     application.add_handler(conv_handler)
     application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("print", print_handler))
     application.add_handler(CallbackQueryHandler(button_dispatcher))
 
     # Set up the scheduler

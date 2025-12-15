@@ -26,6 +26,7 @@ This file tracks the development tasks for the Talía project.
 - [x] Implement `aprobaciones.py` module.
 - [x] Implement `servicios.py` module.
 - [x] Implement `admin.py` module.
+- [x] Add `/print` command for authorized users.
 
 ## Phase 4: Integrations
 
@@ -43,3 +44,7 @@ This file tracks the development tasks for the Talía project.
 - Implemented the `agenda` and `citas` modules.
 - Implemented the conversational flow for proposing and approving activities.
 - Completed Phase 3 by implementing all modules and refactoring the main dispatcher.
+
+### 2024-05-23
+
+- Add `/print` command for authorized users.
