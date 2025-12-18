@@ -1,22 +1,19 @@
 # app/modules/aprobaciones.py
-"""
-This module manages the approval workflow for requests made by the team.
+# Este módulo gestiona el flujo de aprobación para las solicitudes hechas por el equipo.
+# Permite ver solicitudes pendientes y aprobarlas o rechazarlas.
+# El usuario principal aquí es el "owner" (dueño).
 
-It provides functions to view pending requests and to handle the approval or
-rejection of those requests. The primary user for this module is the "owner"
-role, who has the authority to approve or deny requests.
-"""
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 def get_approval_menu(request_id):
     """
-    Creates and returns an inline keyboard with "Approve" and "Reject" buttons.
-
-    Each button is associated with a specific request_id through the
-    callback_data, allowing the bot to identify which request is being acted upon.
+    Crea un menú de botones (teclado en línea) con "Aprobar" y "Rechazar".
+    
+    Cada botón lleva el ID de la solicitud para saber cuál estamos procesando.
     """
     keyboard = [
         [
+            # callback_data es lo que el bot recibe cuando se pulsa el botón
             InlineKeyboardButton("✅ Aprobar", callback_data=f'approve:{request_id}'),
             InlineKeyboardButton("❌ Rechazar", callback_data=f'reject:{request_id}'),
         ]
@@ -25,13 +22,11 @@ def get_approval_menu(request_id):
 
 def view_pending():
     """
-    Shows the owner a list of pending requests that require their attention.
-
-    Currently, this function uses a hardcoded list of proposals for demonstration.
-    In a production environment, this would fetch data from a database or another
-    persistent storage mechanism where pending requests are tracked.
+    Muestra al dueño una lista de solicitudes que esperan su aprobación.
+    
+    Por ahora usa una lista fija de ejemplo.
     """
-    # TODO: Fetch pending requests dynamically from a database or webhook events.
+    # TODO: Obtener solicitudes reales desde una base de datos o servicio externo.
     proposals = [
         {"id": "prop_001", "desc": "Grabación de proyecto", "duration": 4, "user": "Equipo A"},
         {"id": "prop_002", "desc": "Taller de guion", "duration": 2, "user": "Equipo B"},
@@ -40,7 +35,7 @@ def view_pending():
     if not proposals:
         return "No hay solicitudes pendientes.", None
 
-    # For demonstration purposes, we'll just show the first pending proposal.
+    # Tomamos la primera propuesta para mostrarla
     proposal = proposals[0]
 
     text = (
@@ -50,28 +45,25 @@ def view_pending():
         f"⏳ *Duración:* {proposal['duration']} horas"
     )
 
-    # Attach the approval menu to the message.
+    # Adjuntamos los botones de aprobación
     reply_markup = get_approval_menu(proposal['id'])
 
     return text, reply_markup
 
 def handle_approval_action(callback_data):
     """
-    Handles the owner's response (approve or reject) to a request.
-
-    This function is triggered when the owner clicks one of the buttons created
-    by get_approval_menu. It parses the callback_data to determine the action
-    and the request ID.
+    Maneja la respuesta del dueño (clic en aprobar o rechazar).
+    
+    Separa la acción (approve/reject) del ID de la solicitud.
     """
+    # callback_data viene como "accion:id", por ejemplo "approve:prop_001"
     action, request_id = callback_data.split(':')
 
     if action == 'approve':
-        # TODO: Implement logic to update the request's status to 'approved'.
-        # This could involve updating a database and notifying the requester.
+        # TODO: Guardar en base de datos que fue aprobada y avisar al equipo.
         return f"✅ La solicitud *{request_id}* ha sido aprobada."
     elif action == 'reject':
-        # TODO: Implement logic to update the request's status to 'rejected'.
-        # This could involve updating a database and notifying the requester.
+        # TODO: Guardar en base de datos que fue rechazada y avisar al equipo.
         return f"❌ La solicitud *{request_id}* ha sido rechazada."
 
     return "Acción desconocida.", None

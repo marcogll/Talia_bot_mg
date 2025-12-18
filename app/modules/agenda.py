@@ -1,19 +1,15 @@
 # app/modules/agenda.py
-"""
-This module is responsible for handling agenda-related requests.
-
-It provides functionality to fetch and display the user's schedule for the day.
-"""
+# Este módulo se encarga de manejar las peticiones relacionadas con la agenda.
+# Permite obtener y mostrar las actividades programadas para el día.
 
 def get_agenda():
     """
-    Fetches and displays the user's agenda for the current day.
-
-    Currently, this function returns a hardcoded sample agenda for demonstration
-    purposes. The plan is to replace this with a real integration that fetches
-    events from a service like Google Calendar.
+    Obtiene y muestra la agenda del usuario para el día actual.
+    
+    Por ahora, esta función devuelve una agenda de ejemplo fija.
+    El plan es conectarla con Google Calendar para que sea real.
     """
-    # TODO: Fetch the agenda dynamically from Google Calendar.
+    # TODO: Obtener la agenda dinámicamente desde Google Calendar.
     agenda_text = (
         "📅 *Agenda para Hoy*\n\n"
         "• *10:00 AM - 11:00 AM*\n"

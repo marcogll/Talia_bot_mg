@@ -1,4 +1,6 @@
 # app/scheduler.py
+# Este script se encarga de programar tareas automáticas, como el resumen diario.
+
 import logging
 from datetime import time
 from telegram.ext import ContextTypes
@@ -7,41 +9,51 @@ import pytz
 from config import OWNER_CHAT_ID, TIMEZONE
 from modules.agenda import get_agenda
 
-# Enable logging
+# Configuramos el registro de eventos (logging) para ver qué pasa en la consola
 logger = logging.getLogger(__name__)
 
 async def send_daily_summary(context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Sends the daily summary to the owner."""
+    """
+    Función que envía el resumen diario al dueño del bot.
+    Se ejecuta automáticamente según lo programado.
+    """
     job = context.job
     chat_id = job.chat_id
 
-    logger.info(f"Running daily summary job for chat_id: {chat_id}")
+    logger.info(f"Ejecutando tarea de resumen diario para el chat_id: {chat_id}")
 
     try:
+        # Obtenemos la agenda del día
         agenda_text = get_agenda()
+        # Preparamos el mensaje
         summary_text = f"🔔 *Resumen Diario - Buen día, Marco!*\n\n{agenda_text}"
 
+        # Enviamos el mensaje por Telegram
         await context.bot.send_message(
             chat_id=chat_id,
             text=summary_text,
             parse_mode='Markdown'
         )
-        logger.info(f"Successfully sent daily summary to {chat_id}")
+        logger.info(f"Resumen diario enviado con éxito a {chat_id}")
     except Exception as e:
-        logger.error(f"Failed to send daily summary to {chat_id}: {e}")
+        # Si hay un error, lo registramos
+        logger.error(f"Error al enviar el resumen diario a {chat_id}: {e}")
 
 def schedule_daily_summary(application) -> None:
-    """Schedules the daily summary job."""
+    """
+    Programa la tarea del resumen diario para que ocurra todos los días.
+    """
+    # Si no hay un ID de dueño configurado, no programamos nada
     if not OWNER_CHAT_ID:
-        logger.warning("OWNER_CHAT_ID not set. Daily summary will not be scheduled.")
+        logger.warning("OWNER_CHAT_ID no configurado. No se programará el resumen diario.")
         return
 
     job_queue = application.job_queue
 
-    # Use the timezone from config
+    # Configuramos la zona horaria (ej. America/Mexico_City)
     tz = pytz.timezone(TIMEZONE)
 
-    # Schedule the job to run every day at 7:00 AM
+    # Programamos la tarea para que corra todos los días a las 7:00 AM
     scheduled_time = time(hour=7, minute=0, tzinfo=tz)
 
     job_queue.run_daily(
@@ -51,4 +63,4 @@ def schedule_daily_summary(application) -> None:
         name="daily_summary"
     )
 
-    logger.info(f"Scheduled daily summary for {OWNER_CHAT_ID} at {scheduled_time} {TIMEZONE}")
+    logger.info(f"Resumen diario programado para {OWNER_CHAT_ID} a las {scheduled_time} ({TIMEZONE})")
