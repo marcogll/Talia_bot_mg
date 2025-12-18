@@ -160,6 +160,7 @@ cython_debug/
 # Google Service Account Credentials
 *.json
 !credentials.example.json
+google_key.json
 
 # Logs
 *.log

@@ -73,13 +73,7 @@ async def button_dispatcher(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     response_text = "Acción no reconocida."
     reply_markup = None
 
-    # Mapeo de `callback_data` a funciones `async`
-    async_handlers = {
-        'propose_activity': propose_activity_start,
-    }
-
-    # Mapeo para funciones síncronas que devuelven solo texto
-    sync_text_handlers = {
+    simple_handlers = {
         'view_agenda': get_agenda,
         'view_requests_status': view_requests_status,
         'schedule_appointment': request_appointment,
@@ -88,39 +82,39 @@ async def button_dispatcher(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         'manage_users': lambda: "Función de gestión de usuarios no implementada.",
     }
 
-    # Mapeo para funciones síncronas que devuelven texto y markup
-    sync_markup_handlers = {
+    complex_handlers = {
         'admin_menu': get_admin_secondary_menu,
         'view_pending': view_pending,
     }
 
-    if query.data in simple_handlers:
-        handler = simple_handlers[query.data]
-        logger.info(f"Ejecutando simple_handler para: {query.data}")
-        if asyncio.iscoroutinefunction(handler):
-            response_text = await handler()
+    try:
+        if query.data in simple_handlers:
+            handler = simple_handlers[query.data]
+            logger.info(f"Ejecutando simple_handler para: {query.data}")
+            if asyncio.iscoroutinefunction(handler):
+                response_text = await handler()
+            else:
+                response_text = handler()
+        elif query.data in complex_handlers:
+            handler = complex_handlers[query.data]
+            logger.info(f"Ejecutando complex_handler para: {query.data}")
+            if asyncio.iscoroutinefunction(handler):
+                response_text, reply_markup = await handler()
+            else:
+                response_text, reply_markup = handler()
+        elif query.data.startswith(('approve:', 'reject:')):
+            logger.info(f"Ejecutando acción de aprobación: {query.data}")
+            response_text = handle_approval_action(query.data)
+        elif query.data == 'start_create_tag':
+            response_text = "Para crear un tag, por favor usa el comando /create_tag."
         else:
-            response_text = handler()
-        logger.info(f"Respuesta obtenida para {query.data}")
-        await query.edit_message_text(text=response_text, parse_mode='Markdown')
-    elif query.data in complex_handlers:
-        handler = complex_handlers[query.data]
-        logger.info(f"Ejecutando complex_handler para: {query.data}")
-        if asyncio.iscoroutinefunction(handler):
-            response_text, reply_markup = await handler()
-        else:
-            response_text, reply_markup = handler()
-        logger.info(f"Respuesta obtenida para {query.data}")
-        await query.edit_message_text(text=response_text, reply_markup=reply_markup, parse_mode='Markdown')
-    elif query.data.startswith(('approve:', 'reject:')):
-        logger.info(f"Ejecutando acción de aprobación: {query.data}")
-        response_text = handle_approval_action(query.data)
-    elif query.data == 'start_create_tag':
-        response_text = "Para crear un tag, por favor usa el comando /create_tag."
-    else:
-        logger.warning(f"Consulta no manejada por el despachador: {query.data}")
-        await query.edit_message_text(text=response_text)
-        return
+            logger.warning(f"Consulta no manejada por el despachador: {query.data}")
+            await query.edit_message_text(text=response_text)
+            return
+    except Exception as exc:
+        logger.exception(f"Error al procesar la acción {query.data}: {exc}")
+        response_text = "❌ Ocurrió un error al procesar tu solicitud. Intenta de nuevo."
+        reply_markup = None
 
     await query.edit_message_text(text=response_text, reply_markup=reply_markup, parse_mode='Markdown')
 
