@@ -15,8 +15,9 @@ from telegram.ext import (
 
 # Importamos las configuraciones y herramientas que creamos en otros archivos
 from config import TELEGRAM_BOT_TOKEN
-from permissions import get_user_role, is_admin
+from permissions import get_user_role
 from modules.onboarding import handle_start as onboarding_handle_start
+from modules.onboarding import get_admin_secondary_menu
 from modules.agenda import get_agenda
 from modules.citas import request_appointment
 from modules.equipo import (
@@ -33,7 +34,8 @@ from modules.servicios import get_service_info
 from modules.admin import get_system_status
 from modules.print import print_handler
 from modules.create_tag import create_tag_conv_handler, create_tag_start
-from modules.vikunja import vikunja_conv_handler
+from modules.vikunja import vikunja_conv_handler, get_tasks as get_vikunja_tasks
+
 from scheduler import schedule_daily_summary
 
 # Configuramos el sistema de logs para ver mensajes de estado en la consola
@@ -64,17 +66,14 @@ async def button_dispatcher(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     Dependiendo de qué botón se presione, ejecuta una acción diferente.
     """
     query = update.callback_query
-    await query.answer() # Avisa a Telegram que recibimos el clic
+    await query.answer()
     logger.info(f"El despachador recibió una consulta: {query.data}")
 
-    # Texto por defecto si no encontramos la acción
     response_text = "Acción no reconocida."
     reply_markup = None
 
-    # Diccionario de acciones simples (que solo devuelven texto)
     simple_handlers = {
         'view_agenda': get_agenda,
-        'view_tasks': get_tasks,
         'view_requests_status': view_requests_status,
         'schedule_appointment': request_appointment,
         'get_service_info': get_service_info,
@@ -82,43 +81,38 @@ async def button_dispatcher(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         'manage_users': lambda: "Función de gestión de usuarios no implementada.",
     }
 
-    # Diccionario de acciones complejas (que devuelven texto y botones)
     complex_handlers = {
         'view_pending': view_pending,
+        'admin_menu': get_admin_secondary_menu,
     }
 
-    # Buscamos qué función ejecutar según el dato del botón (query.data)
     if query.data in simple_handlers:
         response_text = simple_handlers[query.data]()
+        await query.edit_message_text(text=response_text, parse_mode='Markdown')
     elif query.data in complex_handlers:
         response_text, reply_markup = complex_handlers[query.data]()
+        await query.edit_message_text(text=response_text, reply_markup=reply_markup, parse_mode='Markdown')
     elif query.data.startswith(('approve:', 'reject:')):
-        # Manejo especial para botones de aprobar o rechazar
         response_text = handle_approval_action(query.data)
+        await query.edit_message_text(text=response_text, parse_mode='Markdown')
     elif query.data == 'start_create_tag':
-        # Iniciamos el flujo de creación de tag
         await query.message.reply_text("Iniciando creación de tag...")
-        # Aquí simulamos el comando /create_tag
         return await create_tag_start(update, context)
+    else:
+        # Si no es ninguna de las acciones conocidas, asumimos que es para un ConversationHandler
+        # y no hacemos nada aquí para no interferir.
+        logger.warning(f"Consulta no manejada por el despachador principal: {query.data}")
 
-    # Editamos el mensaje original con la nueva información
-    await query.edit_message_text(text=response_text, reply_markup=reply_markup, parse_mode='Markdown')
 
 def main() -> None:
     """Función principal que arranca el bot."""
-    # Verificamos que tengamos el token del bot
     if not TELEGRAM_BOT_TOKEN:
         logger.error("TELEGRAM_BOT_TOKEN no está configurado en las variables de entorno.")
         return
 
-    # Creamos la aplicación del bot
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
-
-    # Programamos el resumen diario
     schedule_daily_summary(application)
 
-    # Configuramos un "manejador de conversación" para proponer actividades
-    # Esto permite que el bot haga varias preguntas seguidas (descripción, duración)
     conv_handler = ConversationHandler(
         entry_points=[CallbackQueryHandler(propose_activity_start, pattern='^propose_activity$')],
         states={
@@ -129,7 +123,8 @@ def main() -> None:
         per_message=False
     )
 
-    # Registramos todos los manejadores de eventos en la aplicación
+    # El order de los handlers importa. El dispatcher debe ir después de los ConversationHandlers
+    # para no interceptar sus callbacks.
     application.add_handler(conv_handler)
     application.add_handler(create_tag_conv_handler())
     application.add_handler(vikunja_conv_handler())
@@ -137,10 +132,8 @@ def main() -> None:
     application.add_handler(CommandHandler("print", print_handler))
     application.add_handler(CallbackQueryHandler(button_dispatcher))
 
-    # Iniciamos el bot (se queda escuchando mensajes)
     logger.info("Iniciando Talía Bot...")
     application.run_polling()
 
-# Si este archivo se ejecuta directamente, llamamos a la función main()
 if __name__ == "__main__":
     main()
