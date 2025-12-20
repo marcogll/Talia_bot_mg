@@ -3,9 +3,9 @@ import sys
 import os
 
 # Add app directory to path
-sys.path.append(os.path.join(os.getcwd(), 'app'))
+sys.path.append(os.path.join(os.getcwd(), 'talia_bot'))
 
-from google_calendar import get_events
+from modules.calendar import get_events
 from config import CALENDAR_ID
 
 def test_get_events():

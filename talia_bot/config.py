@@ -1,4 +1,4 @@
-# app/config.py
+# talia_bot/config.py
 # Este archivo se encarga de cargar todas las variables de entorno y configuraciones del bot.
 # Las variables de entorno son valores que se guardan fuera del código por seguridad (como tokens y llaves API).
 
@@ -14,13 +14,7 @@ load_dotenv(dotenv_path=env_path)
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 # ID de chat del dueño del bot (para recibir notificaciones importantes)
-OWNER_CHAT_ID = os.getenv("OWNER_CHAT_ID")
-
-# IDs de chat de los administradores, separados por comas en el archivo .env
-ADMIN_CHAT_IDS = os.getenv("ADMIN_CHAT_IDS", "").split(",")
-
-# IDs de chat del equipo de trabajo, separados por comas
-TEAM_CHAT_IDS = os.getenv("TEAM_CHAT_IDS", "").split(",")
+ADMIN_ID = os.getenv("ADMIN_ID")
 
 # Ruta al archivo de credenciales de la cuenta de servicio de Google
 GOOGLE_SERVICE_ACCOUNT_FILE = os.getenv("GOOGLE_SERVICE_ACCOUNT_FILE")

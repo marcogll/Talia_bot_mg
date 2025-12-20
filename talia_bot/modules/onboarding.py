@@ -1,23 +1,15 @@
-# app/modules/onboarding.py
+# talia_bot/modules/onboarding.py
 # Este módulo maneja la primera interacción con el usuario (el comando /start).
-# Se encarga de mostrar un menú diferente según quién sea el usuario (dueño, admin, equipo o cliente).
+# Se encarga de mostrar un menú diferente según quién sea el usuario (admin, crew o cliente).
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-
-def get_owner_menu():
-    """Crea el menú de botones para el Dueño (Owner)."""
-    keyboard = [
-        [InlineKeyboardButton("📅 Ver mi agenda", callback_data='view_agenda')],
-        [InlineKeyboardButton("⏳ Ver pendientes", callback_data='view_pending')],
-    ]
-    return InlineKeyboardMarkup(keyboard)
 
 def get_admin_menu():
     """Crea el menú de botones principal para los Administradores."""
     keyboard = [
-        [InlineKeyboardButton("⏳ Revisar Pendientes", callback_data='view_pending')],
+        [InlineKeyboardButton("👑 Revisar Pendientes", callback_data='view_pending')],
         [InlineKeyboardButton("📅 Agenda", callback_data='view_agenda')],
-        [InlineKeyboardButton("🏷️ Crear Tag", callback_data='start_create_tag')],
+        [InlineKeyboardButton(" NFC", callback_data='start_create_tag')],
         [InlineKeyboardButton("▶️ Más opciones", callback_data='admin_menu')],
     ]
     return InlineKeyboardMarkup(keyboard)
@@ -33,7 +25,7 @@ def get_admin_secondary_menu():
     reply_markup = InlineKeyboardMarkup(keyboard)
     return text, reply_markup
 
-def get_team_menu():
+def get_crew_menu():
     """Crea el menú de botones para los Miembros del Equipo."""
     keyboard = [
         [InlineKeyboardButton("🕒 Proponer actividad", callback_data='propose_activity')],
@@ -55,10 +47,10 @@ def handle_start(user_role):
     """
     welcome_message = "Hola, soy Talía. ¿En qué puedo ayudarte hoy?"
 
-    if user_role in ["owner", "admin"]:
+    if user_role == "admin":
         menu = get_admin_menu()
-    elif user_role == "team":
-        menu = get_team_menu()
+    elif user_role == "crew":
+        menu = get_crew_menu()
     else:
         menu = get_client_menu()
 

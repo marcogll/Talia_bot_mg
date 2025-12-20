@@ -1,4 +1,4 @@
-# app/main.py
+# talia_bot/main.py
 # Este es el archivo principal del bot. Aquí se inicia todo y se configuran los comandos.
 
 import logging
@@ -15,13 +15,13 @@ from telegram.ext import (
 )
 
 # Importamos las configuraciones y herramientas que creamos en otros archivos
-from config import TELEGRAM_BOT_TOKEN
-from permissions import get_user_role
-from modules.onboarding import handle_start as onboarding_handle_start
-from modules.onboarding import get_admin_secondary_menu
-from modules.agenda import get_agenda
-from modules.citas import request_appointment
-from modules.equipo import (
+from talia_bot.config import TELEGRAM_BOT_TOKEN
+from talia_bot.modules.identity import get_user_role
+from talia_bot.modules.onboarding import handle_start as onboarding_handle_start
+from talia_bot.modules.onboarding import get_admin_secondary_menu
+from talia_bot.modules.agenda import get_agenda
+from talia_bot.modules.citas import request_appointment
+from talia_bot.modules.equipo import (
     propose_activity_start,
     get_description,
     get_duration,
@@ -30,14 +30,15 @@ from modules.equipo import (
     DESCRIPTION,
     DURATION,
 )
-from modules.aprobaciones import view_pending, handle_approval_action
-from modules.servicios import get_service_info
-from modules.admin import get_system_status
-from modules.print import print_handler
-from modules.create_tag import create_tag_conv_handler
-from modules.vikunja import vikunja_conv_handler
+from talia_bot.modules.aprobaciones import view_pending, handle_approval_action
+from talia_bot.modules.servicios import get_service_info
+from talia_bot.modules.admin import get_system_status
+from talia_bot.modules.debug import print_handler
+from talia_bot.modules.create_tag import create_tag_conv_handler
+from talia_bot.modules.vikunja import vikunja_conv_handler
+from talia_bot.db import setup_database
 
-from scheduler import schedule_daily_summary
+from talia_bot.scheduler import schedule_daily_summary
 
 # Configuramos el sistema de logs para ver mensajes de estado en la consola
 logging.basicConfig(
@@ -123,6 +124,8 @@ def main() -> None:
     if not TELEGRAM_BOT_TOKEN:
         logger.error("TELEGRAM_BOT_TOKEN no está configurado en las variables de entorno.")
         return
+
+    setup_database()
 
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
     schedule_daily_summary(application)

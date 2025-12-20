@@ -1,11 +1,11 @@
-# app/modules/print.py
+# talia_bot/modules/debug.py
 # Este módulo permite a los administradores imprimir los detalles de configuración del bot.
 # Es una herramienta útil para depuración (debugging).
 
 from telegram import Update
 from telegram.ext import ContextTypes
-from permissions import is_admin
-from config import TIMEZONE, CALENDAR_ID, N8N_WEBHOOK_URL
+from talia_bot.modules.identity import is_admin
+from talia_bot.config import TIMEZONE, CALENDAR_ID, N8N_WEBHOOK_URL
 
 async def print_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """

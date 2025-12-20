@@ -1,257 +1,165 @@
-# Talía — Asistente Ejecutiva Inteligente
+# 🤖 Talia Bot: Asistente Personal & Orquestador de Negocio
 
-Talía es una asistente ejecutiva digital diseñada para centralizar, ordenar y coordinar la agenda, solicitudes y actividades de Marco. Funciona como un **punto único de entrada** para clientes, equipo y administradores, asegurando que cada solicitud se procese con contexto, validación y respeto por el tiempo disponible.
-
-Talía no improvisa ni asume. **Consulta, valida, confirma y ejecuta.**
+Talia no es un simple chatbot; es un Middleware de Inteligencia Artificial alojado en un VPS que orquesta las operaciones diarias de administración, logística y ventas. Actúa como el puente central entre usuarios en Telegram y servicios críticos como Vikunja (Gestión de Proyectos), Google Calendar y Hardware de Impresión remota.
 
 ---
 
-## 🎯 Propósito del Sistema
+## 🚀 Concepto Central: Enrutamiento por Identidad
 
-Talía existe para eliminar fricción operativa y proteger el tiempo ejecutivo. El sistema está diseñado para:
+La característica core de Talia es su capacidad de cambiar de personalidad y permisos dinámicamente basándose en el Telegram ID del usuario:
 
-* Centralizar todas las solicitudes de agenda, citas y actividades
-* Validar disponibilidad real antes de comprometer tiempo
-* Priorizar clientes sin romper compromisos existentes
-* Delegar reglas de negocio y disponibilidad a flujos en n8n
-* Mantener trazabilidad completa mediante eventos webhook
-* Escalar de forma modular sin romper flujos existentes
-
----
-
-## 🧠 Personalidad, Actitud y Voz
-
-Talía se comporta como una asistente ejecutiva profesional:
-
-* Educada, clara y precisa en cada respuesta
-* Proactiva, pero nunca invasiva
-* Siempre confirma antes de agendar o ejecutar acciones
-* No improvisa horarios ni decisiones
-* Comunica decisiones con calma, orden y neutralidad
-
-Talía no es informal, no es robótica y no utiliza sarcasmo. Su función es **ordenar el día, no interrumpirlo**.
+| Rol     | Icono | Descripción         | Permisos                                                                          |
+| :------ | :---: | :------------------ | :-------------------------------------------------------------------------------- |
+| **Admin** |  👑   | Dueño / Gerente     | God Mode: Gestión total de proyectos, bloqueos de calendario, generación de identidad NFC e impresión. |
+| **Crew**  |  👷   | Equipo Operativo    | Limitado: Solicitud de agenda (validada), asignación de tareas, impresión de documentos. |
+| **Cliente** |  👤   | Usuario Público     | Ventas: Embudo de captación, consulta de servicios (RAG) y agendamiento comercial. |
 
 ---
 
-## 👥 Roles y Niveles de Acceso
+## 🛠️ Arquitectura Técnica
 
-### Marco (Owner)
+El sistema sigue un flujo modular:
 
-* Consulta agenda, pendientes y solicitudes activas
-* Recibe resumen diario automático a las 7:00 AM
-* Aprueba o rechaza solicitudes del equipo
-* Puede interactuar desde su número privado
-* Tiene prioridad absoluta sobre cualquier decisión
-
-### Clientes
-
-* Solicitan citas de duración fija (30 minutos)
-* Visualizan únicamente horarios disponibles
-* No tienen acceso a la agenda completa
-
-### Equipo Autorizado
-
-* Puede proponer actividades de mayor duración (ej. grabaciones)
-* Puede solicitar acciones operativas
-* Toda actividad que consuma tiempo requiere aprobación
-
-### Administradores
-
-* Ejecutan acciones sensibles
-* Requieren validación adicional
-* Acceden a flujos administrativos restringidos
+1.  **Input**: Telegram (Texto o Audio).
+2.  **STT**: Whisper (Conversión de Audio a Texto).
+3.  **Router**: Verificación de ID contra la base de datos de usuarios.
+4.  **Cerebro (LLM)**: OpenAI (Fase 1) / Google Gemini (Fase 2).
+5.  **Tools**:
+    *   **Vikunja API**: Lectura/Escritura de tareas con filtrado de privacidad.
+    *   **Google Calendar API**: Gestión de tiempos y reglas de disponibilidad.
+    *   **SMTP/IMAP**: Comunicación bidireccional con impresoras.
+    *   **NFC Gen**: Codificación Base64 para tags físicos.
 
 ---
 
-## 🏗️ Arquitectura del Sistema
+## 📋 Flujos de Trabajo (Features)
 
-Talía está construida en capas desacopladas que se comunican por eventos:
+### 1. 👑 Gestión Admin (Proyectos & Identidad)
 
-1. **Interfaz Conversacional** – Telegram / WhatsApp
-2. **Cerebro Central** – Python
-3. **Automatización y Reglas** – n8n
-4. **Servicios Externos** – Google Calendar, IA, APIs
+*   **Proyectos (Vikunja)**:
+    *   Resumen inteligente de estatus de proyectos.
+    *   Comandos naturales: *"Marca el proyecto de web como terminado y comenta que se envió factura"*.
+*   **Wizard de Identidad (NFC)**:
+    *   Flujo paso a paso para dar de alta colaboradores.
+    *   Genera JSON de registro y String Base64 listo para escribir en Tags NFC.
+    *   Inputs: Nombre, ID Empleado, Sucursal (Botones), Telegram ID.
 
-Cada capa es independiente y puede evolucionar sin afectar a las demás.
+### 2. 👷 Gestión Crew (Agenda & Tareas)
+
+*   **Solicitud de Tiempo (Wizard)**:
+    *   Solicita espacios de 1 a 4 horas.
+    *   **Reglas de Negocio**:
+        *   No permite fechas > 3 meses a futuro.
+        *   **Gatekeeper**: Verifica Google Calendar. Si hay evento "Privado" del Admin, rechaza automáticamente.
+*   **Modo Buzón (Vikunja)**:
+    *   Crea tareas asignadas al Admin.
+    *   **Privacidad**: Solo pueden consultar el estatus de tareas creadas por ellos mismos.
+
+### 3. 🖨️ Sistema de Impresión Remota (Print Loop)
+
+*   Permite enviar archivos desde Telegram a la impresora física de la oficina.
+*   **Envío (SMTP)**: El bot envía el documento a un correo designado.
+*   **Tracking**: El asunto del correo lleva un hash único: `PJ:{uuid}#TID:{telegram_id}`.
+*   **Confirmación (IMAP Listener)**: Un proceso en background escucha la respuesta de la impresora y notifica al usuario en Telegram.
+
+### 4. 👤 Ventas Automáticas (RAG)
+
+*   Identifica usuarios nuevos (no registrados en la DB).
+*   Captura datos (Lead Magnet).
+*   Analiza ideas de clientes usando `servicios.json` (Base de conocimiento).
+*   Ofrece citas de ventas mediante link de Calendly.
 
 ---
 
-## 📁 Estructura del Proyecto
+## ⚙️ Instalación y Configuración
 
-```text
-talia-bot/
-├── docker-compose.yml        # Orquestación de contenedores
-├── Dockerfile               # Imagen del bot
-├── .env.example             # Variables de entorno
-├── README.md                # Documentación
-└── app/
-    ├── main.py              # Cerebro del bot
-    ├── config.py            # Configuración y credenciales
-    ├── permissions.py       # Roles y validaciones
-    ├── scheduler.py         # Resumen diario y recordatorios
-    ├── webhook_client.py    # Comunicación con n8n
-    ├── calendar.py          # Integración Google Calendar
-    ├── llm.py               # Respuestas inteligentes (IA)
-    └── modules/
-        ├── onboarding.py    # Bienvenida y menú inicial
-        ├── agenda.py        # Consulta de agenda
-        ├── citas.py         # Citas con clientes
-        ├── equipo.py        # Solicitudes del equipo
-        ├── aprobaciones.py  # Aprobaciones del owner
-        ├── servicios.py     # Servicios y cotizaciones
-        └── admin.py         # Acciones administrativas
+### Prerrequisitos
+
+*   Python 3.10+
+*   Cuenta de Telegram Bot (@BotFather)
+*   Instancia de Vikunja (Self-hosted)
+*   Cuenta de Servicio Google Cloud (Calendar API)
+*   Servidor de Correo (SMTP/IMAP)
+
+### 1. Clonar y Entorno Virtual
+
+```bash
+git clone https://github.com/marcogll/talia_bot_mg.git
+cd talia_bot_mg
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
 ```
 
----
+### 2. Variables de Entorno (`.env`)
 
-## 🧠 Cerebro del Sistema (`main.py`)
-
-`main.py` actúa como **orquestador central**. No contiene reglas de negocio complejas. Sus funciones son:
-
-* Recibir mensajes y callbacks
-* Identificar usuario y rol
-* Mantener contexto conversacional
-* Delegar acciones a módulos
-* Emitir y recibir eventos vía webhook
-
-Toda decisión importante se valida externamente.
-
----
-
-## 🧩 Módulos Funcionales
-
-Cada módulo cumple una responsabilidad única:
-
-* **onboarding.py**: inicio de conversación y opciones
-* **agenda.py**: consulta de agenda y pendientes
-* **citas.py**: flujo de citas con clientes
-* **equipo.py**: solicitudes internas del equipo
-* **aprobaciones.py**: aceptar o rechazar solicitudes
-* **servicios.py**: información y cotización de proyectos
-* **admin.py**: acciones administrativas
-* **create_tag.py**: genera un tag de identificación en Base64 para NFC
-* **print.py**: (admin) imprime la configuración actual del bot
-
----
-
-## ⚡ Comandos Adicionales
-
-### `/create_tag`
-
-Este comando inicia un flujo conversacional para generar un tag de identificación en formato Base64, compatible con aplicaciones de escritura NFC. El bot solicitará los siguientes datos:
-
-*   **Nombre**
-*   **Número de empleado**
-*   **Sucursal**
-*   **ID de Telegram**
-
-Al finalizar, el bot devolverá una cadena de texto en Base64 que contiene un objeto JSON con la información proporcionada.
-
----
-
-## 🔁 Flujo General de Ejecución
-
-1. Usuario envía mensaje o interactúa con botones
-2. Talía valida identidad y permisos
-3. Se ejecuta el módulo correspondiente
-4. Si se requiere lógica externa, se envía evento a n8n
-5. n8n evalúa reglas y responde
-6. Talía comunica el resultado
-7. Si aplica, se agenda en Google Calendar
-
----
-
-## 📆 Gestión de Agenda
-
-### Citas con Clientes
-
-* Duración fija: 30 minutos
-* Disponibilidad definida exclusivamente por n8n
-* Confirmación explícita antes de agendar
-
-### Actividades del Equipo
-
-* Duración flexible
-* Requieren aprobación del owner
-* Solo usuarios autorizados pueden solicitarlas
-
----
-
-## ⏰ Resumen Diario
-
-Todos los días a las **7:00 AM**, Talía envía a Marco:
-
-* Agenda del día
-* Pendientes activos
-* Recordatorios importantes
-
----
-
-## 🔌 Webhooks
-
-Toda acción relevante genera o responde un evento webhook.
-
-Ejemplo:
-
-```json
-{
-  "event": "request_activity",
-  "from": "team",
-  "duration_hours": 4,
-  "description": "Grabación de proyecto"
-}
-```
-
----
-
-## 🔐 Variables de Entorno
+Crea un archivo `.env` en la raíz con la siguiente estructura:
 
 ```env
-TELEGRAM_BOT_TOKEN=
-OWNER_CHAT_ID=
-ADMIN_CHAT_IDS=
-TEAM_CHAT_IDS=
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-GOOGLE_REFRESH_TOKEN=
-N8N_WEBHOOK_URL=
-OPENAI_API_KEY=
-TIMEZONE=America/Mexico_City
+# --- TELEGRAM & SECURITY ---
+TELEGRAM_BOT_TOKEN=tu_token_telegram
+ADMIN_ID=tu_telegram_id
+
+# --- AI CORE ---
+OPENAI_API_KEY=sk-...
+
+# --- INTEGRACIONES ---
+VIKUNJA_API_URL=https://tuservidor.com/api/v1
+VIKUNJA_TOKEN=tu_token_vikunja
+GOOGLE_CREDENTIALS_PATH=./data/credentials.json
+
+# --- PRINT SERVICE ---
+SMTP_SERVER=smtp.hostinger.com
+SMTP_PORT=465
+SMTP_USER=print.service@vanityexperience.mx
+SMTP_PASS=tu_password_seguro
+IMAP_SERVER=imap.hostinger.com
+```
+
+### 3. Estructura de Datos
+
+Asegúrate de tener los archivos base en `talia_bot/data/`:
+*   `servicios.json`: Catálogo de servicios para el RAG de ventas.
+*   `credentials.json`: Credenciales de Google Cloud.
+*   `users.db`: Base de datos SQLite.
+
+---
+
+## 📂 Estructura del Proyecto
+
+```text
+talia_bot_mg/
+├── talia_bot/
+│   ├── main.py              # Entry Point y Router de Identidad
+│   ├── db.py                # Gestión de la base de datos
+│   ├── config.py            # Carga de variables de entorno
+│   ├── modules/
+│   │   ├── identity.py      # Lógica de Roles y Permisos
+│   │   ├── llm_engine.py    # Cliente OpenAI/Gemini
+│   │   ├── vikunja.py       # API Manager para Tareas
+│   │   ├── calendar.py      # Google Calendar Logic & Rules
+│   │   ├── printer.py       # SMTP/IMAP Loop
+│   │   └── sales_rag.py     # Lógica de Ventas y Servicios
+│   └── data/
+│       ├── servicios.json   # Base de conocimiento
+│       ├── credentials.json # Credenciales de Google
+│       └── users.db         # Base de datos de usuarios
+├── .env.example             # Plantilla de variables de entorno
+├── requirements.txt         # Dependencias
+├── Dockerfile               # Configuración del contenedor
+└── docker-compose.yml       # Orquestador de Docker
 ```
 
 ---
 
-## 🐳 Despliegue con Docker Compose
+## 🗓️ Roadmap
 
-```yaml
-version: "3.9"
-services:
-  talia-bot:
-    build: .
-    container_name: talia-bot
-    env_file:
-      - .env
-    restart: unless-stopped
-```
+- [ ] Implementar Wizard de creación de Tags NFC (Base64).
+- [ ] Conectar Loop de Impresión (SMTP/IMAP).
+- [ ] Migrar de OpenAI a Google Gemini 1.5 Pro.
+- [ ] Implementar soporte para fotos en impresión.
 
 ---
 
-## 🛠️ Guía de Desarrollo
-
-1. Clonar el repositorio
-2. Crear archivo `.env`
-3. Configurar bot de Telegram
-4. Configurar flujos y reglas en n8n
-5. Conectar Google Calendar
-6. Levantar servicios con Docker Compose
-
----
-
-## ✨ Principio Rector
-
-Talía no es un bot que responde mensajes.
-Es un sistema de criterio, orden y protección del tiempo.
-
-Si algo no está claro, pregunta.
-Si algo invade la agenda, protege.
-Si algo es importante, lo prioriza.
+Desarrollado por: Marco G.
+Asistente Personalizado v1.0
