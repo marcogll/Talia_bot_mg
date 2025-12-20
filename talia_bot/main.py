@@ -41,9 +41,11 @@ from talia_bot.modules.vikunja import get_projects, add_comment_to_task, update_
 from talia_bot.db import setup_database
 from talia_bot.modules.flow_engine import FlowEngine
 from talia_bot.modules.transcription import transcribe_audio
+import uuid
 from talia_bot.modules.llm_engine import analyze_client_pitch
 from talia_bot.modules.calendar import create_event
 from talia_bot.modules.mailer import send_email_with_attachment
+from talia_bot.modules.imap_listener import check_for_confirmation
 from talia_bot.config import ADMIN_ID, VIKUNJA_INBOX_PROJECT_ID
 
 from talia_bot.scheduler import schedule_daily_summary
@@ -313,11 +315,21 @@ async def handle_flow_resolution(update: Update, context: ContextTypes.DEFAULT_T
 
     elif resolution_type == "resolution_email_sent":
         file_info = collected_data.get("UPLOAD_FILE")
+        user_id = update.effective_user.id
+
         if isinstance(file_info, dict):
             file_id = file_info.get("file_id")
             file_name = file_info.get("file_name")
 
             if file_id and file_name:
+                job_id = str(uuid.uuid4())
+                subject_data = {
+                    "job_id": job_id,
+                    "telegram_id": user_id,
+                    "filename": file_name
+                }
+                subject = f"DATA:{json.dumps(subject_data)}"
+
                 file_obj = await context.bot.get_file(file_id)
                 file_buffer = io.BytesIO()
                 await file_obj.download_to_memory(file_buffer)
@@ -326,9 +338,21 @@ async def handle_flow_resolution(update: Update, context: ContextTypes.DEFAULT_T
                 success = await send_email_with_attachment(
                     file_content=file_buffer.getvalue(),
                     filename=file_name,
-                    subject=f"Print Job: {file_name}"
+                    subject=subject
                 )
-                if not success:
+
+                if success:
+                    final_message = f"Recibido. 📨\n\nTu trabajo de impresión ha sido enviado (Job ID: {job_id}). Te notificaré cuando la impresora confirme que ha sido impreso."
+
+                    # Esperar y verificar la confirmación
+                    await asyncio.sleep(60) # Espera de 60 segundos
+                    confirmation_data = await asyncio.to_thread(check_for_confirmation, job_id)
+
+                    if confirmation_data:
+                        await context.bot.send_message(chat_id=user_id, text=f"✅ ¡Éxito! Tu archivo '{file_name}' ha sido impreso correctamente.")
+                    else:
+                        await context.bot.send_message(chat_id=user_id, text=f"⚠️ El trabajo de impresión para '{file_name}' fue enviado, pero no he recibido una confirmación de la impresora. Por favor, verifica la bandeja de la impresora.")
+                else:
                     final_message = "❌ Hubo un error al enviar el archivo a la impresora."
             else:
                 final_message = "❌ No se encontró la información del archivo."
