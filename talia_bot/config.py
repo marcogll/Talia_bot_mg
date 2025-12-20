@@ -29,8 +29,9 @@ N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL")
 N8N_TEST_WEBHOOK_URL = os.getenv("N8N_TEST_WEBHOOK_URL")
 
 # Configuración de Vikunja
-VIKUNJA_API_URL = os.getenv("VIKUNJA_API_URL", "https://tasks.soul23.cloud/api/v1")
-VIKUNJA_API_TOKEN = os.getenv("VIKUNJA_API_TOKEN")
+VIKUNJA_API_URL = os.getenv("VIKUNJA_BASE_URL")
+VIKUNJA_API_TOKEN = os.getenv("VIKUNJA_TOKEN")
+VIKUNJA_INBOX_PROJECT_ID = os.getenv("VIKUNJA_INBOX_PROJECT_ID")
 
 # Llave de la API de OpenAI para usar modelos de lenguaje (como GPT)
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
