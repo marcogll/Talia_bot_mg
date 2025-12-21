@@ -23,13 +23,7 @@ from talia_bot.modules.onboarding import get_admin_secondary_menu
 from talia_bot.modules.agenda import get_agenda
 from talia_bot.modules.citas import request_appointment
 from talia_bot.modules.equipo import (
-    propose_activity_start,
-    get_description,
-    get_duration,
-    cancel_proposal,
     view_requests_status,
-    DESCRIPTION,
-    DURATION,
 )
 from talia_bot.modules.aprobaciones import view_pending, handle_approval_action
 from talia_bot.modules.servicios import get_service_info
@@ -48,11 +42,6 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 logger = logging.getLogger(__name__)
-
-
-async def catch_all_handler(update: object, context: ContextTypes.DEFAULT_TYPE):
-    print("--- CATCH ALL HANDLER ---")
-    print(update)
 
 
 async def send_step_message(update: Update, step: dict):
@@ -181,7 +170,6 @@ async def reset_conversation(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 
 async def button_dispatcher(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    print("--- BUTTON DISPATCHER CALLED ---")
     """
     Esta función maneja los clics en los botones del menú.
     Dependiendo de qué botón se presione, ejecuta una acción diferente.
@@ -289,21 +277,6 @@ def main() -> None:
 
     schedule_daily_summary(application)
 
-    # Conversation handler for proposing activities
-    conv_handler = ConversationHandler(
-        entry_points=[CallbackQueryHandler(propose_activity_start, pattern='^propose_activity$')],
-        states={
-            DESCRIPTION: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_description)],
-            DURATION: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_duration)],
-        },
-        fallbacks=[CommandHandler('cancel', cancel_proposal)],
-        per_message=False
-    )
-    application.add_handler(conv_handler)
-    
-    # El orden de los handlers es crucial para que las conversaciones funcionen.
-    # application.add_handler(vikunja_conv_handler())
-
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("reset", reset_conversation)) # Added reset command
     application.add_handler(CommandHandler("print", print_handler))
@@ -314,8 +287,6 @@ def main() -> None:
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND | filters.VOICE, text_and_voice_handler))
 
     application.add_handler(CallbackQueryHandler(button_dispatcher))
-
-    application.add_handler(TypeHandler(object, catch_all_handler))
 
     logger.info("Iniciando Talía Bot...")
     application.run_polling()

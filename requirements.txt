@@ -1,4 +1,4 @@
-python-telegram-bot[job-queue]
+python-telegram-bot[job-queue]<22
 requests
 schedule
 google-api-python-client

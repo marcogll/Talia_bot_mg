@@ -1,0 +1,29 @@
+{
+    "id": "crew_propose_activity",
+    "description": "Permite a un miembro del equipo proponer una actividad para aprobación.",
+    "trigger_button": "propose_activity",
+    "user_roles": ["crew"],
+    "steps": [
+        {
+            "step_id": "get_description",
+            "question": "Por favor, describe la actividad que quieres proponer.",
+            "input_type": "text",
+            "next_step": "get_duration"
+        },
+        {
+            "step_id": "get_duration",
+            "question": "Entendido. Ahora, por favor, indica la duración estimada en horas (ej. 2, 4.5).",
+            "input_type": "text",
+            "next_step": "confirm_proposal"
+        },
+        {
+            "step_id": "confirm_proposal",
+            "question": "Gracias. Se ha enviado la siguiente propuesta para aprobación:\n\n📝 *Actividad:* {get_description}\n⏳ *Duración:* {get_duration} horas\n\nRecibirás una notificación cuando sea revisada.",
+            "input_type": "static"
+        }
+    ],
+    "completion_action": {
+        "action_type": "notify_admin",
+        "message_template": "Nueva propuesta de actividad:\n\nDescripción: {get_description}\nDuración: {get_duration} horas"
+    }
+}
