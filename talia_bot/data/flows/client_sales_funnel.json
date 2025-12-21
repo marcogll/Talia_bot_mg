@@ -1,6 +1,7 @@
 {
   "id": "client_sales_funnel",
   "role": "client",
+  "trigger_button": "get_service_info",
   "trigger_automatic": true,
   "steps": [
     {
