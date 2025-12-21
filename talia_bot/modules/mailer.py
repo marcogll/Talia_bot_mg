@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 async def send_email_with_attachment(file_content: bytes, filename: str, subject: str):
     """
     Sends an email with an attachment using SMTP.
+    Adapts connection method based on SMTP_PORT.
     """
     if not all([SMTP_SERVER, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, PRINTER_EMAIL]):
         logger.error("SMTP settings are not fully configured.")
@@ -40,13 +41,20 @@ async def send_email_with_attachment(file_content: bytes, filename: str, subject
     try:
         context = ssl.create_default_context()
 
-        # Usamos asyncio.to_thread para correr el código síncrono de smtplib
         def _send_mail():
-            with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-                server.starttls(context=context)
-                server.login(SMTP_USER, SMTP_PASSWORD)
-                server.sendmail(IMAP_USER, PRINTER_EMAIL, text)
-                logger.info(f"Email sent to {PRINTER_EMAIL} for printing.")
+            if SMTP_PORT == 465:
+                # Use SMTP_SSL for port 465
+                with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, context=context) as server:
+                    server.login(SMTP_USER, SMTP_PASSWORD)
+                    server.sendmail(IMAP_USER, PRINTER_EMAIL, text)
+            else:
+                # Use STARTTLS for other ports like 587
+                with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+                    server.starttls(context=context)
+                    server.login(SMTP_USER, SMTP_PASSWORD)
+                    server.sendmail(IMAP_USER, PRINTER_EMAIL, text)
+
+            logger.info(f"Email sent to {PRINTER_EMAIL} for printing.")
 
         await asyncio.to_thread(_send_mail)
         return True

@@ -40,6 +40,7 @@ El sistema sigue un flujo modular:
     *   **`vikunja.py`**: API asíncrona para leer/escribir tareas y proyectos.
     *   **`calendar.py`**: API para crear eventos en Google Calendar.
     *   **`mailer.py`**: Envío de correos (SMTP) para el flujo de impresión.
+    *   **`imap_listener.py`**: Escucha de confirmaciones de impresión (IMAP).
     *   **`llm_engine.py`**: Análisis RAG para el embudo de ventas.
 
 ---
@@ -70,6 +71,7 @@ Crea un archivo `.env` en la raíz del proyecto a partir de `.env.example` y rel
 # --- TELEGRAM & SECURITY ---
 TELEGRAM_BOT_TOKEN=tu_token_telegram
 ADMIN_ID=tu_telegram_id
+CREW_CHAT_IDS=id1,id2,id3
 
 # --- AI CORE ---
 OPENAI_API_KEY=sk-...
@@ -82,15 +84,15 @@ VIKUNJA_INBOX_PROJECT_ID=el_id_de_tu_proyecto_bandeja_de_entrada
 GOOGLE_SERVICE_ACCOUNT_FILE=google_key.json
 CALENDAR_ID=tu_id_de_google_calendar
 
-# --- PRINT SERVICE ---
-SMTP_SERVER=smtp.tuservidor.com
-SMTP_PORT=587
-SMTP_USER=tu_usuario_smtp
+# --- PRINT SERVICE (SMTP/IMAP) ---
+SMTP_SERVER=smtp.hostinger.com
+SMTP_PORT=465
+SMTP_USER=print.service@vanityexperience.mx
 SMTP_PASSWORD=tu_password_smtp
-IMAP_SERVER=imap.tuservidor.com
-IMAP_USER=tu_usuario_imap
+IMAP_SERVER=imap.hostinger.com
+IMAP_USER=print.service@vanityexperience.mx
 IMAP_PASSWORD=tu_password_imap
-PRINTER_EMAIL=el_email_de_la_impresora
+PRINTER_EMAIL=vanityprinter@print.epsonconnect.com
 ```
 
 ### 3. Ejecutar con Docker
@@ -118,7 +120,7 @@ talia_bot_mg/
 │   │   ├── llm_engine.py    # Cliente OpenAI (Whisper y GPT)
 │   │   ├── transcription.py # Lógica de transcripción de audio
 │   │   ├── mailer.py        # Módulo para envío de correos (SMTP)
-│   │   └── ...              # Otros módulos de soporte
+│   │   └── imap_listener.py # Módulo para leer correos (IMAP)
 │   └── data/
 │       ├── flows.json       # ¡IMPORTANTE! Define todas las conversaciones
 │       ├── services.json    # Base de conocimiento para ventas
@@ -136,11 +138,11 @@ talia_bot_mg/
 
 - [x] **Implementado el Motor de Flujos Conversacionales.**
 - [x] **Integración completa de Vikunja, OpenAI y Google Calendar.**
-- [ ] Implementar el loop de confirmación de impresión (IMAP Listener).
+- [x] **Implementado el Loop de Confirmación de Impresión (IMAP).**
 - [ ] Mejorar el parsing de fechas y horas con lenguaje natural más avanzado.
 - [ ] Migrar de OpenAI a Google Gemini 1.5 Pro.
 
 ---
 
 Desarrollado por: Marco G.
-Asistente Personalizado v2.0 (Arquitectura de Flujos)
+Asistente Personalizado v2.1 (Ciclo de Impresión Completo)
