@@ -4,6 +4,7 @@ import logging
 import os
 from talia_bot.db import get_db_connection
 from talia_bot.modules.sales_rag import generate_sales_pitch
+from talia_bot.modules.nfc_tag import generate_nfc_tag
 
 logger = logging.getLogger(__name__)
 
@@ -127,6 +128,9 @@ class FlowEngine:
                 user_query = final_data.get('IDEA_PITCH', '')
                 sales_pitch = generate_sales_pitch(user_query, final_data)
                 response['sales_pitch'] = sales_pitch
+            elif flow['id'] == 'admin_create_nfc_tag':
+                nfc_tag = generate_nfc_tag(final_data)
+                response['nfc_tag'] = nfc_tag
 
             return response
 

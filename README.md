@@ -57,6 +57,12 @@ Permite a los usuarios autorizados (`admin`) enviar documentos a una impresora f
 *   El acceso a las funcionalidades está restringido por roles (`admin`, `crew`, `client`), los cuales se gestionan en una base de datos **SQLite**.
 *   Los menús y opciones se muestran dinámicamente según el rol del usuario, asegurando que cada quien solo vea las herramientas que le corresponden.
 
+### 5.  NFC Tag Wizard
+
+*   Un flujo de conversación exclusivo para administradores que permite registrar a un nuevo colaborador.
+*   El wizard recopila el nombre, ID de empleado, sucursal y Telegram ID a través de una serie de preguntas.
+*   Al finalizar, genera un string en formato **Base64** que contiene los datos en un objeto JSON, listo para ser escrito en una etiqueta NFC.
+
 ---
 
 ## ⚙️ Instalación y Configuración
@@ -165,9 +171,9 @@ talia_bot/
 - **✅ Integración con Google Calendar**: Consulta de agenda.
 - **✅ Servicio de Impresión Remota (SMTP/IMAP)**: Envío de documentos y monitoreo de estado.
 - **✅ Flujo de Ventas RAG**: Captura de leads y generación de propuestas personalizadas con IA.
+- **✅ Wizard de Creación de Tags NFC**: Flujo para registrar nuevos colaboradores y generar un tag Base64.
 
 ### Próximos Pasos
-- [ ] **Wizard de Creación de Tags NFC (Base64)**: Implementar el flujo completo para registrar nuevos colaboradores.
 - [ ] **Soporte para Fotos en Impresión**: Añadir la capacidad de enviar imágenes al servicio de impresión.
 - [ ] **Migración a Google Gemini 1.5 Pro**: Evaluar y migrar el motor de IA para optimizar costos y capacidades.
 

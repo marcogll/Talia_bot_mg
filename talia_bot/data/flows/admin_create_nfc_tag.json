@@ -1,25 +1,31 @@
 {
   "id": "admin_create_nfc_tag",
   "role": "admin",
-  "trigger_button": "➕ Crear Tag NFC",
+  "trigger_button": "start_create_tag",
   "steps": [
     {
       "step_id": 0,
-      "variable": "NFC_ACTION_TYPE",
-      "question": "Creemos un nuevo tag NFC. ¿Qué acción quieres que dispare?",
-      "options": ["Iniciar Flujo", "URL Estática"]
+      "variable": "EMPLOYEE_NAME",
+      "question": "Vamos a crear un nuevo tag de empleado. Por favor, dime el nombre completo:",
+      "input_type": "text"
     },
     {
       "step_id": 1,
-      "variable": "NFC_FLOW_CHOICE",
-      "question": "Okay, ¿qué flujo debería iniciar este tag?",
-      "input_type": "dynamic_keyboard_flows"
+      "variable": "EMPLOYEE_ID",
+      "question": "Gracias. Ahora, por favor, dime el número de empleado:",
+      "input_type": "text"
     },
     {
       "step_id": 2,
-      "variable": "NFC_CONFIRM",
-      "question": "Perfecto. Cuando acerques tu teléfono a este tag, se iniciará el flujo '{flow_name}'. Aquí tienes los datos para escribir en el tag: {NFC_DATA}",
-      "options": ["✅ Hecho"]
+      "variable": "BRANCH",
+      "question": "Entendido. Ahora, por favor, selecciona la sucursal:",
+      "options": ["🏢 Oficina Principal", "📦 Almacén", "🚚 Logística"]
+    },
+    {
+      "step_id": 3,
+      "variable": "TELEGRAM_ID",
+      "question": "Perfecto. Finalmente, por favor, dime el ID numérico de Telegram del empleado:",
+      "input_type": "text"
     }
   ]
 }

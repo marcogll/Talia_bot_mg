@@ -35,7 +35,6 @@ from talia_bot.modules.servicios import get_service_info
 from talia_bot.modules.admin import get_system_status
 import os
 from talia_bot.modules.debug import print_handler
-from talia_bot.modules.create_tag import create_tag_conv_handler
 from talia_bot.modules.vikunja import vikunja_conv_handler
 from talia_bot.modules.printer import send_file_to_printer, check_print_status
 from talia_bot.db import setup_database
@@ -90,6 +89,8 @@ async def text_and_voice_handler(update: Update, context: ContextTypes.DEFAULT_T
     elif result["status"] == "complete":
         if "sales_pitch" in result:
             await update.message.reply_text(result["sales_pitch"])
+        elif "nfc_tag" in result:
+            await update.message.reply_text(result["nfc_tag"], parse_mode='Markdown')
         else:
             await update.message.reply_text("Gracias por completar el flujo.")
     elif result["status"] == "error":
@@ -167,8 +168,6 @@ async def button_dispatcher(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         elif query.data.startswith(('approve:', 'reject:')):
             logger.info(f"Ejecutando acción de aprobación: {query.data}")
             response_text = handle_approval_action(query.data)
-        elif query.data == 'start_create_tag':
-            response_text = "Para crear un tag, por favor usa el comando /create_tag."
         else:
             logger.warning(f"Consulta no manejada por el despachador: {query.data}")
             await query.edit_message_text(text=response_text)
@@ -207,7 +206,6 @@ def main() -> None:
     schedule_daily_summary(application)
 
     # El orden de los handlers es crucial para que las conversaciones funcionen.
-    application.add_handler(create_tag_conv_handler())
     application.add_handler(vikunja_conv_handler())
 
     conv_handler = ConversationHandler(
