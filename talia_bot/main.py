@@ -26,7 +26,6 @@ from talia_bot.modules.equipo import (
     view_requests_status,
 )
 from talia_bot.modules.aprobaciones import view_pending, handle_approval_action
-from talia_bot.modules.servicios import get_service_info
 from talia_bot.modules.admin import get_system_status
 import os
 from talia_bot.modules.debug import print_handler
@@ -192,7 +191,6 @@ async def button_dispatcher(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         'view_agenda': get_agenda,
         'view_requests_status': view_requests_status,
         'schedule_appointment': request_appointment,
-        'get_service_info': get_service_info,
         'view_system_status': get_system_status,
         'manage_users': lambda: "Función de gestión de usuarios no implementada.",
     }
