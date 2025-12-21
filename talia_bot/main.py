@@ -90,6 +90,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     Muestra un mensaje de bienvenida y un menú según el rol del usuario.
     """
     chat_id = update.effective_chat.id
+
+    # Reset any existing conversation flow
+    flow_engine = context.bot_data.get("flow_engine")
+    if flow_engine:
+        flow_engine.end_flow(chat_id)
+        logger.info(f"User {chat_id} started a new conversation, clearing any previous state.")
+
     user_role = get_user_role(chat_id)
 
     logger.info(f"Usuario {chat_id} inició conversación con el rol: {user_role}")
