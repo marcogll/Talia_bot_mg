@@ -23,7 +23,7 @@ This document tracks all pending tasks, improvements, and issues identified in t
 - **Priority**: High
 
 ### [IMP-002] Dynamic Menu Generation
-- **Status**: TODO
+- **Status**: DONE
 - **Priority**: Medium
 - **Description**: `onboarding.py` has hardcoded menus instead of dynamic generation
 - **Action needed**: Implement dynamic menu generation based on user roles
@@ -79,7 +79,7 @@ This document tracks all pending tasks, improvements, and issues identified in t
 - **Priority**: High
 
 ### [DEP-003] Docker Security Hardening
-- **Status**: TODO
+- **Status**: DONE
 - **Priority**: Medium
 - **Description**: Running as root user, missing security hardening
 - **Action needed**: Add USER directive, read-only filesystem, health checks
@@ -95,13 +95,13 @@ This document tracks all pending tasks, improvements, and issues identified in t
 - **Priority**: Medium
 
 ### [BUG-003] Identity Module String Comparison
-- **Status**: TODO
+- **Status**: DONE
 - **Priority**: Low
 - **Description**: `identity.py:42` string comparison for ADMIN_ID could fail if numeric
 - **Action needed**: Fix type handling for user ID comparison
 
 ### [BUG-004] Missing sqlite3 import
-- **Status**: TODO
+- **Status**: DONE
 - **Priority**: High
 - **Description**: `flow_engine.py` missing `sqlite3` import causing NameError
 - **Files affected**: `flow_engine.py`
