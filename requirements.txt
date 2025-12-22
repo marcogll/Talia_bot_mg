@@ -1,4 +1,4 @@
-python-telegram-bot[job-queue]<22
+python-telegram-bot[job-queue]==21.1.1
 requests
 schedule
 google-api-python-client
@@ -7,3 +7,4 @@ google-auth-oauthlib
 openai
 pytz
 python-dotenv
+ffmpeg-python

@@ -42,7 +42,8 @@ from bot.modules.vikunja import vikunja_conv_handler, get_projects_list, get_tas
 from bot.modules.printer import send_file_to_printer, check_print_status
 from bot.db import setup_database
 from bot.modules.flow_engine import FlowEngine
-from bot.modules.llm_engine import transcribe_audio
+from bot.modules.transcription import transcribe_audio
+from bot.modules.file_validation import validate_document
 
 from bot.scheduler import schedule_daily_summary
 
@@ -169,6 +170,13 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     """Handles documents sent to the bot for printing."""
     document = update.message.document
     user_id = update.effective_user.id
+
+    # Validate the document before processing
+    is_valid, message = validate_document(document)
+    if not is_valid:
+        await update.message.reply_text(message)
+        return
+
     file = await context.bot.get_file(document.file_id)
 
     # Create a directory for temporary files if it doesn't exist
