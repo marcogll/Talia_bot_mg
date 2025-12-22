@@ -1,4 +1,4 @@
-# talia_bot/modules/printer.py
+# bot/modules/printer.py
 # This module will contain the SMTP/IMAP loop for the remote printing service.
 
 import smtplib
@@ -10,7 +10,7 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 
-from talia_bot.config import (
+from bot.config import (
     SMTP_SERVER,
     SMTP_PORT,
     SMTP_USER,
@@ -20,7 +20,7 @@ from talia_bot.config import (
     IMAP_PASS,
     PRINTER_EMAIL,
 )
-from talia_bot.modules.identity import is_admin
+from bot.modules.identity import is_admin
 
 logger = logging.getLogger(__name__)
 

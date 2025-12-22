@@ -1,9 +1,9 @@
-# talia_bot/modules/identity.py
+# bot/modules/identity.py
 # Este script maneja los roles y permisos de los usuarios.
 
 import logging
-from talia_bot.db import get_db_connection
-from talia_bot.config import ADMIN_ID
+from bot.db import get_db_connection
+from bot.config import ADMIN_ID
 
 logger = logging.getLogger(__name__)
 

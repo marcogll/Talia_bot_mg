@@ -1,8 +1,8 @@
-# talia_bot/modules/llm_engine.py
+# bot/modules/llm_engine.py
 # Este script se encarga de la comunicación con la inteligencia artificial de OpenAI.
 
 import openai
-from talia_bot.config import OPENAI_API_KEY, OPENAI_MODEL
+from bot.config import OPENAI_API_KEY, OPENAI_MODEL
 
 def get_smart_response(prompt):
     """

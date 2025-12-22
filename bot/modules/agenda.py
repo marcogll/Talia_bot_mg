@@ -1,11 +1,11 @@
-# talia_bot/modules/agenda.py
+# bot/modules/agenda.py
 # Este módulo se encarga de manejar las peticiones relacionadas con la agenda.
 # Permite obtener y mostrar las actividades programadas para el día.
 
 import datetime
 import logging
-from talia_bot.modules.calendar import get_events
-from talia_bot.config import WORK_GOOGLE_CALENDAR_ID, PERSONAL_GOOGLE_CALENDAR_ID
+from bot.modules.calendar import get_events
+from bot.config import WORK_GOOGLE_CALENDAR_ID, PERSONAL_GOOGLE_CALENDAR_ID
 
 logger = logging.getLogger(__name__)
 

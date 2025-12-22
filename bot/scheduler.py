@@ -9,8 +9,8 @@ from datetime import time
 from telegram.ext import ContextTypes
 import pytz
 
-from talia_bot.config import ADMIN_ID, TIMEZONE, DAILY_SUMMARY_TIME
-from talia_bot.modules.agenda import get_agenda
+from bot.config import ADMIN_ID, TIMEZONE, DAILY_SUMMARY_TIME
+from bot.modules.agenda import get_agenda
 
 # Configuramos el registro de eventos (logging) para ver qué pasa en la consola
 logger = logging.getLogger(__name__)

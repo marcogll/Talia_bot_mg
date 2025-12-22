@@ -1,4 +1,4 @@
-# talia_bot/config.py
+# bot/config.py
 # This file loads all environment variables and bot configurations.
 # Environment variables are stored securely outside the code (e.g., in a .env file).
 

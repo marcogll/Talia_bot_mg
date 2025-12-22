@@ -4,8 +4,8 @@
 # Get the directory of the script
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Set PYTHONPATH to include the parent directory
-export PYTHONPATH="$PYTHONPATH:$DIR/.."
+# Ensure the project root is on PYTHONPATH so absolute imports resolve
+export PYTHONPATH="$DIR:${PYTHONPATH}"
 
-# Run the bot
-python3 "$DIR/talia_bot/main.py"
+# Run the bot using the package entrypoint
+python3 -m bot.main

@@ -13,8 +13,8 @@ from telegram.ext import (
     ContextTypes,
 )
 
-from talia_bot.config import VIKUNJA_API_URL, VIKUNJA_API_TOKEN
-from talia_bot.modules.identity import is_admin
+from bot.config import VIKUNJA_API_URL, VIKUNJA_API_TOKEN
+from bot.modules.identity import is_admin
 
 # Configuración del logger
 logger = logging.getLogger(__name__)

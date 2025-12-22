@@ -8,8 +8,8 @@ WORKDIR /talia_bot
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-# Copy app code
-COPY talia_bot/ .
+# Copy the package contents
+COPY bot bot
 
-# Run the bot
-CMD ["python", "main.py"]
+# Run the bot via the package entrypoint
+CMD ["python", "-m", "bot.main"]

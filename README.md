@@ -8,11 +8,11 @@ Talia es un **Middleware de Inteligencia Artificial** diseñado para orquestar o
 
 El bot opera como un agente que sigue un ciclo de **Recepción -> Identificación -> Enrutamiento -> Ejecución**.
 
-1.  **Recepción de Mensajes**: `main.py` actúa como el punto de entrada que recibe todos los inputs (texto, botones, comandos, documentos) desde Telegram.
+1.  **Recepción de Mensajes**: `bot/main.py` actúa como el punto de entrada que recibe todos los inputs (texto, botones, comandos, documentos) desde Telegram.
 2.  **Identificación de Usuario**: Al recibir un mensaje, el módulo `identity.py` consulta la base de datos (`users.db`) para obtener el rol del usuario (`admin`, `crew`, `client`).
 3.  **Enrutamiento de Acciones**:
     *   **Si el usuario está en una conversación activa**, el `flow_engine.py` toma el control y procesa la respuesta según la definición del flujo JSON correspondiente.
-    *   **Si el usuario no está en una conversación**, el sistema le muestra un menú de botones. Estos menús se generan dinámicamente a partir de los archivos de flujo en `talia_bot/data/flows/` que tienen una clave `"trigger_button"`.
+    *   **Si el usuario no está en una conversación**, el sistema le muestra un menú de botones. Estos menús se generan dinámicamente a partir de los archivos de flujo en `bot/data/flows/` que tienen una clave `"trigger_button"`.
 4.  **Ejecución de Módulos**: Dependiendo de la acción, se invocan módulos específicos para interactuar con APIs externas:
     *   `sales_rag.py` para generar respuestas de ventas con IA.
     *   `printer.py` para enviar correos de impresión.
@@ -116,9 +116,9 @@ GOOGLE_SERVICE_ACCOUNT_FILE=./google_key.json
 
 *   **Base de Datos**: La base de datos `users.db` se creará automáticamente si no existe. Para asignar roles, debes agregar manualmente los Telegram IDs en la tabla `users`.
 *   **Credenciales de Google**: Coloca tu archivo de credenciales de la cuenta de servicio de Google Cloud en el directorio raíz del proyecto y renómbralo a `google_key.json`. **El archivo `.gitignore` ya está configurado para ignorar este archivo y proteger tus claves.**
-*   **Flujos de Conversación**: Para modificar o añadir flujos, edita los archivos JSON en `talia_bot/data/flows/`.
+*   **Flujos de Conversación**: Para modificar o añadir flujos, edita los archivos JSON en `bot/data/flows/`.
 
-Asegúrate de tener los archivos y directorios base en `talia_bot/data/`:
+Asegúrate de tener los archivos y directorios base en `bot/data/`:
 *   `servicios.json`: Catálogo de servicios para el RAG de ventas.
 *   `credentials.json`: Credenciales de Google Cloud.
 *   `users.db`: Base de datos SQLite que almacena los roles de los usuarios.
@@ -136,28 +136,37 @@ talia_bot/
 ├── Dockerfile                 # Define el contenedor de la aplicación
 ├── docker-compose.yml         # Orquesta el servicio del bot
 ├── google_key.json            # (Local) Credenciales de Google Cloud
+├── plan_de_pruebas.md         # Casos de prueba documentados
+├── README.md                  # Documentación principal
 ├── requirements.txt           # Dependencias de Python
-├── talia_bot/
-│   ├── main.py              # Entry Point y dispatcher principal
-│   ├── db.py                # Gestión de la base de datos SQLite
-│   ├── config.py            # Carga de variables de entorno
-│   ├── modules/
-│   │   ├── flow_engine.py   # Motor de flujos de conversación (lee los JSON)
-│   │   ├── identity.py      # Lógica de Roles y Permisos
-│   │   ├── llm_engine.py    # Cliente OpenAI/Gemini
-│   │   ├── vikunja.py       # API Manager para Tareas
-│   │   ├── calendar.py      # Google Calendar Logic & Rules
-│   │   ├── printer.py       # SMTP/IMAP Loop
-│   │   └── sales_rag.py     # Lógica de Ventas y Servicios
-│   └── data/
-│       ├── flows/           # Directorio con los flujos de conversación en JSON
-│       ├── servicios.json   # Base de conocimiento para ventas
-│       ├── credentials.json # Credenciales de Google
-│       └── users.db         # Base de datos de usuarios
-├── .env.example             # Plantilla de variables de entorno
-├── requirements.txt         # Dependencias
-├── Dockerfile               # Configuración del contenedor
-└── docker-compose.yml       # Orquestador de Docker
+├── start_bot.sh               # Script para iniciar el bot en desarrollo
+└── bot/
+    ├── __init__.py            # Inicializador de paquete
+    ├── main.py                # Entry point y dispatcher principal
+    ├── db.py                  # Gestión de la base de datos SQLite
+    ├── config.py              # Carga de variables de entorno
+    ├── scheduler.py           # Tareas programadas y resúmenes diarios
+    ├── webhook_client.py      # Webhooks externos (n8n, etc.)
+    ├── modules/
+    │   ├── flow_engine.py     # Motor de flujos de conversación
+    │   ├── identity.py        # Lógica de Roles y Permisos
+    │   ├── llm_engine.py      # Cliente OpenAI/Gemini
+    │   ├── vikunja.py         # API Manager para tareas
+    │   ├── calendar.py        # Google Calendar Logic & Rules
+    │   ├── agenda.py          # Agendas y solicitudes
+    │   ├── printer.py         # SMTP/IMAP Loop
+    │   ├── sales_rag.py       # Lógica de Ventas y Servicios
+    │   ├── debug.py           # Herramientas de diagnóstico
+    │   ├── onboarding.py      # Menús y onboarding inicial
+    │   ├── citas.py           # Solicitudes de citas
+    │   ├── nfc_tag.py         # Wizard NFC
+    │   ├── aprobaciones.py    # Aprobaciones y rechazos
+    │   └── equipo.py          # Equipo y estado de solicitudes
+    └── data/
+        ├── flows/             # Directorio con los flujos de conversación JSON
+        ├── servicios.json     # Base de conocimiento para ventas
+        ├── credentials.json   # Credenciales de Google
+        └── users.db           # Base de datos de usuarios
 ```
 
 ---

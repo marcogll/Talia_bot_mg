@@ -1,10 +1,10 @@
-# talia_bot/modules/flow_engine.py
+# bot/modules/flow_engine.py
 import json
 import logging
 import os
-from talia_bot.db import get_db_connection
-from talia_bot.modules.sales_rag import generate_sales_pitch
-from talia_bot.modules.nfc_tag import generate_nfc_tag
+from bot.db import get_db_connection
+from bot.modules.sales_rag import generate_sales_pitch
+from bot.modules.nfc_tag import generate_nfc_tag
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ class FlowEngine:
 
     def _load_flows(self):
         """Loads all individual flow JSON files from the flows directory."""
-        # flows_dir = 'talia_bot/data/flows' # OLD
+        # flows_dir = 'bot/data/flows' # OLD
         base_dir = os.path.dirname(os.path.abspath(__file__))
         flows_dir = os.path.join(base_dir, '..', 'data', 'flows')
         

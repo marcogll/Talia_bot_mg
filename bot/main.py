@@ -1,8 +1,10 @@
-# talia_bot/main.py
+# bot/main.py
 # Este es el archivo principal del bot. Aquí se inicia todo y se configuran los comandos.
 
 import logging
 import asyncio
+import sys
+from pathlib import Path
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
@@ -15,27 +17,34 @@ from telegram.ext import (
     TypeHandler,
 )
 
+# Ensure package imports work even if the file is executed directly
+if __package__ is None:
+    current_dir = Path(__file__).resolve().parent
+    project_root = current_dir.parent
+    if str(project_root) not in sys.path:
+        sys.path.insert(0, str(project_root))
+
 # Importamos las configuraciones y herramientas que creamos en otros archivos
-from talia_bot.config import TELEGRAM_BOT_TOKEN
-from talia_bot.modules.identity import get_user_role
-from talia_bot.modules.onboarding import handle_start as onboarding_handle_start
-from talia_bot.modules.onboarding import get_admin_secondary_menu
-from talia_bot.modules.agenda import get_agenda
-from talia_bot.modules.citas import request_appointment
-from talia_bot.modules.equipo import (
+from bot.config import TELEGRAM_BOT_TOKEN
+from bot.modules.identity import get_user_role
+from bot.modules.onboarding import handle_start as onboarding_handle_start
+from bot.modules.onboarding import get_admin_secondary_menu
+from bot.modules.agenda import get_agenda
+from bot.modules.citas import request_appointment
+from bot.modules.equipo import (
     view_requests_status,
 )
-from talia_bot.modules.aprobaciones import view_pending, handle_approval_action
-from talia_bot.modules.admin import get_system_status
+from bot.modules.aprobaciones import view_pending, handle_approval_action
+from bot.modules.admin import get_system_status
 import os
-from talia_bot.modules.debug import print_handler
-from talia_bot.modules.vikunja import vikunja_conv_handler, get_projects_list, get_tasks_list
-from talia_bot.modules.printer import send_file_to_printer, check_print_status
-from talia_bot.db import setup_database
-from talia_bot.modules.flow_engine import FlowEngine
-from talia_bot.modules.llm_engine import transcribe_audio
+from bot.modules.debug import print_handler
+from bot.modules.vikunja import vikunja_conv_handler, get_projects_list, get_tasks_list
+from bot.modules.printer import send_file_to_printer, check_print_status
+from bot.db import setup_database
+from bot.modules.flow_engine import FlowEngine
+from bot.modules.llm_engine import transcribe_audio
 
-from talia_bot.scheduler import schedule_daily_summary
+from bot.scheduler import schedule_daily_summary
 
 # Configuramos el sistema de logs para ver mensajes de estado en la consola
 logging.basicConfig(

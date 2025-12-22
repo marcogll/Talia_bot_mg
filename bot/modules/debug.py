@@ -1,11 +1,16 @@
-# talia_bot/modules/debug.py
+# bot/modules/debug.py
 # Este módulo permite a los administradores imprimir los detalles de configuración del bot.
 # Es una herramienta útil para depuración (debugging).
 
 from telegram import Update
 from telegram.ext import ContextTypes
-from talia_bot.modules.identity import is_admin
-from talia_bot.config import TIMEZONE, CALENDAR_ID, N8N_WEBHOOK_URL
+from bot.modules.identity import is_admin
+from bot.config import (
+    TIMEZONE,
+    WORK_GOOGLE_CALENDAR_ID,
+    PERSONAL_GOOGLE_CALENDAR_ID,
+    N8N_WEBHOOK_URL,
+)
 
 async def print_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
@@ -21,8 +26,9 @@ async def print_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         config_details = (
             f"**Detalles de Configuración**\n"
             f"Zona Horaria: `{TIMEZONE}`\n"
-            f"ID de Calendario: `{CALENDAR_ID}`\n"
-            f"URL Webhook n8n: `{N8N_WEBHOOK_URL}`\n"
+            f"Calendario Trabajo: `{WORK_GOOGLE_CALENDAR_ID or 'No definido'}`\n"
+            f"Calendario Personal: `{PERSONAL_GOOGLE_CALENDAR_ID or 'No definido'}`\n"
+            f"URL Webhook n8n: `{N8N_WEBHOOK_URL or 'No definido'}`\n"
         )
         await update.message.reply_text(config_details, parse_mode='Markdown')
     else:

@@ -1,4 +1,4 @@
-# talia_bot/modules/nfc_tag.py
+# bot/modules/nfc_tag.py
 # This module contains the logic for generating NFC tags.
 
 import base64

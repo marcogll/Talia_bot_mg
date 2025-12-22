@@ -1,16 +1,16 @@
-# talia_bot/modules/sales_rag.py
+# bot/modules/sales_rag.py
 # This module will contain the sales RAG flow for new clients.
 
 import json
 import logging
-from talia_bot.modules.llm_engine import get_smart_response
+from bot.modules.llm_engine import get_smart_response
 
 logger = logging.getLogger(__name__)
 
 def load_services_data():
     """Loads the services data from the JSON file."""
     try:
-        with open("talia_bot/data/services.json", "r", encoding="utf-8") as f:
+        with open("bot/data/services.json", "r", encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
         logger.error("El archivo services.json no fue encontrado.")

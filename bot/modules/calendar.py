@@ -7,7 +7,7 @@ import logging
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from talia_bot.config import GOOGLE_SERVICE_ACCOUNT_FILE, WORK_GOOGLE_CALENDAR_ID
+from bot.config import GOOGLE_SERVICE_ACCOUNT_FILE, WORK_GOOGLE_CALENDAR_ID
 
 logger = logging.getLogger(__name__)
 

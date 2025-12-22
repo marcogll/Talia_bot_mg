@@ -1,4 +1,4 @@
-# talia_bot/db.py
+# bot/db.py
 # This module will handle the database connection and operations.
 
 import sqlite3

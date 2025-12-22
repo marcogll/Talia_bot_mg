@@ -1,4 +1,4 @@
-# talia_bot/modules/onboarding.py
+# bot/modules/onboarding.py
 # Este módulo maneja la primera interacción con el usuario (el comando /start).
 # Se encarga de mostrar un menú diferente según quién sea el usuario (admin, crew o cliente).
 
